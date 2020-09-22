@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tf-deployment
+  namespace: poc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tf
+      env: preprod
+  template:
+    metadata:
+      labels:
+        app: tf
+        env: preprod
+    spec:
+      containers:
+        - name: tfserver
+          image: squashtest/squash-tf-execution-server:2.3.1-RELEASE
+          ports:
+            - containerPort: 8080
+
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: tf
+  namespace: poc
+spec:
+  selector:
+    app: tf
+    env: preprod
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+
+---
+
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: tf-ingress
+  namespace: poc
+  annotations:
+    kubernetes.io/ingress.class: "traefik"
+spec:
+  rules:
+    - host: minikube.tf
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: tf
+              servicePort: 8080
+
+
