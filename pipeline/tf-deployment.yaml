@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: tfserver
-          image: squashtest/squash-tf-execution-server:2.3.1-RELEASE
+          image: squashtest/squash-tf-execution-server:2.2.0-RELEASE
           ports:
             - containerPort: 8080
 
